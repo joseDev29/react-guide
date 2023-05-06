@@ -1,0 +1,18 @@
+.use-state-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-state-page__count {
+  font-size: 32px;
+}
+
+.use-state-page__actions {
+  display: flex;
+  gap: 16px;
+}
