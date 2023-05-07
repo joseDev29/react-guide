@@ -4,15 +4,23 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DateRangePicker, LocalizationProvider } from '@mui/x-date-pickers-pro'
 import { useCounter } from './hooks/useCounter'
 import { useVisible } from './hooks/useVisible'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { produce } from 'immer'
 import { useForm } from 'react-hook-form'
 import Chart from './components/NavBar/Chart'
+
+import { io } from 'socket.io-client'
 
 const AppWithMUI = () => {
   const { count, add, substract } = useCounter(15)
 
   const { visible, show, close } = useVisible()
+
+  const [message, setMessage] = useState('')
+
+  const [socket, setSocket] = useState(null)
+
+  const [messages, setMessages] = useState([])
 
   //   const [form, setForm] = useState({
   //     username: { value: '', error: false, errorText: '' },
@@ -65,6 +73,23 @@ const AppWithMUI = () => {
     //   }
     // })
   }
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:4500', {
+      transports: ['websocket'],
+      autoConnect: true,
+      forceNew: true,
+    })
+    setSocket(newSocket)
+  }, [])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('message', (msg) => {
+        setMessages((curr) => [...curr, msg])
+      })
+    }
+  }, [socket])
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -141,6 +166,30 @@ const AppWithMUI = () => {
           </Box>
         </Dialog>
         <Chart />
+        <Typography>Chat example</Typography>
+        <Box display='flex' alignItems='center'>
+          <TextField
+            placeholder='messsage'
+            value={message}
+            onChange={(ev) => {
+              setMessage(ev.target.value)
+            }}
+          />
+          <Button
+            onClick={() => {
+              socket.emit('message', message)
+              setMessages((curr) => [...curr, message])
+              setMessage('')
+            }}
+          >
+            Send
+          </Button>
+        </Box>
+        <Box display='flex' flexDirection='column' marginTop={2} gap={1}>
+          {messages.map((msg) => {
+            return <Typography>{msg}</Typography>
+          })}
+        </Box>
       </Box>
     </LocalizationProvider>
   )
