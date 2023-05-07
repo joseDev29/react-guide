@@ -1,20 +1,23 @@
-import React, { useReducer } from "react";
+import { useReducer } from "react";
+import { useCounter } from "../../hooks/useCounter";
 
-const reducer = (currentCount, action) => {
-  switch (action.type) {
-    case "ADD":
-      return currentCount + 1;
+// const reducer = (currentCount, action) => {
+//   switch (action.type) {
+//     case "ADD":
+//       return currentCount + 1;
 
-    case "MINUS":
-      return currentCount - 1;
+//     case "MINUS":
+//       return currentCount - 1;
 
-    case "CHANGE":
-      return currentCount + action.value;
-  }
-};
+//     case "CHANGE":
+//       return currentCount + action.value;
+//   }
+// };
 
 const UseReducerPage = () => {
-  const [count, dispatch] = useReducer(reducer, 0);
+  // const [count, dispatch] = useReducer(reducer, 0);
+
+  const { count, substract, add, change } = useCounter(23);
 
   return (
     <div
@@ -30,11 +33,14 @@ const UseReducerPage = () => {
     >
       <span style={{ fontSize: 32 }}>{count}</span>
       <div style={{ display: "flex", gap: 16 }}>
-        <button onClick={() => dispatch({ type: "MINUS" })}>-</button>
+        {/* <button onClick={() => dispatch({ type: "MINUS" })}>-</button>
         <button onClick={() => dispatch({ type: "ADD" })}>+</button>
         <button onClick={() => dispatch({ type: "CHANGE", value: 5 })}>
           +5
-        </button>
+        </button> */}
+        <button onClick={substract}>-</button>
+        <button onClick={add}>+</button>
+        <button onClick={() => change(5)}>+5</button>
       </div>
     </div>
   );
